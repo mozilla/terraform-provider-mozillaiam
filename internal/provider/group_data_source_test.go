@@ -21,7 +21,7 @@ func TestAccGroupDataSource(t *testing.T) {
 					// Filtering to staff should still return at least one member
 					// with a populated user identifier.
 					statecheck.ExpectKnownValue(
-						"data.cis_group.test",
+						"data.personapi_group.test",
 						tfjsonpath.New("members").AtSliceIndex(0).AtMapKey("id"),
 						knownvalue.NotNull(),
 					),
@@ -32,7 +32,7 @@ func TestAccGroupDataSource(t *testing.T) {
 }
 
 const testAccGroupDataSourceConfigGroupAndStaff = `
-data "cis_group" "test" {
+data "personapi_group" "test" {
   ldap_group = "team_moco"
   staff      = true
 }

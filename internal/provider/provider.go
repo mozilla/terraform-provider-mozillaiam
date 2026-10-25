@@ -7,7 +7,8 @@ import (
 	"runtime"
 	"strconv"
 	"strings"
-	"terraform-provider-cis/internal/provider/person_api"
+
+	"terraform-provider-personapi/internal/provider/person_api"
 
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
 	"github.com/hashicorp/terraform-plugin-framework/function"
@@ -19,20 +20,20 @@ import (
 	"github.com/hashicorp/terraform-plugin-log/tflog"
 )
 
-// Ensure CISProvider satisfies various provider interfaces.
-var _ provider.Provider = &CISProvider{}
-var _ provider.ProviderWithFunctions = &CISProvider{}
+// Ensure PersonAPIProvider satisfies various provider interfaces.
+var _ provider.Provider = &PersonAPIProvider{}
+var _ provider.ProviderWithFunctions = &PersonAPIProvider{}
 
-// CISProvider defines the provider implementation.
-type CISProvider struct {
+// PersonAPIProvider defines the provider implementation.
+type PersonAPIProvider struct {
 	// version is set to the provider version on release, "dev" when the
 	// provider is built and ran locally, and "test" when running acceptance
 	// testing.
 	version string
 }
 
-// CISProviderModel describes the provider data model.
-type CISProviderModel struct {
+// PersonAPIProviderModel describes the provider data model.
+type PersonAPIProviderModel struct {
 	Auth0Endpoint     types.String `tfsdk:"auth0_endpoint"`
 	Auth0ClientID     types.String `tfsdk:"auth0_client_id"`
 	Auth0ClientSecret types.String `tfsdk:"auth0_client_secret"`
@@ -40,13 +41,14 @@ type CISProviderModel struct {
 	PersonEndpoint    types.String `tfsdk:"person_endpoint"`
 }
 
-func (p *CISProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
-	resp.TypeName = "cis"
+func (p *PersonAPIProvider) Metadata(ctx context.Context, req provider.MetadataRequest, resp *provider.MetadataResponse) {
+	resp.TypeName = "personapi"
 	resp.Version = p.version
 }
 
-func (p *CISProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
+func (p *PersonAPIProvider) Schema(ctx context.Context, req provider.SchemaRequest, resp *provider.SchemaResponse) {
 	resp.Schema = schema.Schema{
+		MarkdownDescription: "Reads people and group membership from Mozilla's Person API.",
 		Attributes: map[string]schema.Attribute{
 			"auth0_endpoint": schema.StringAttribute{
 				Description:         "Auth0 endpoint",
@@ -80,10 +82,10 @@ func (p *CISProvider) Schema(ctx context.Context, req provider.SchemaRequest, re
 	}
 }
 
-func (p *CISProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
+func (p *PersonAPIProvider) Configure(ctx context.Context, req provider.ConfigureRequest, resp *provider.ConfigureResponse) {
 	tflog.Info(ctx, "Configuring CIS client")
 
-	var data CISProviderModel
+	var data PersonAPIProviderModel
 
 	resp.Diagnostics.Append(req.Config.Get(ctx, &data)...)
 
@@ -180,24 +182,24 @@ func (p *CISProvider) Configure(ctx context.Context, req provider.ConfigureReque
 	resp.ResourceData = client
 }
 
-func (p *CISProvider) Resources(ctx context.Context) []func() resource.Resource {
+func (p *PersonAPIProvider) Resources(ctx context.Context) []func() resource.Resource {
 	return []func() resource.Resource{}
 }
 
-func (p *CISProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
+func (p *PersonAPIProvider) DataSources(ctx context.Context) []func() datasource.DataSource {
 	return []func() datasource.DataSource{
 		NewPeopleDataSource,
 		NewGroupDataSource,
 	}
 }
 
-func (p *CISProvider) Functions(ctx context.Context) []func() function.Function {
+func (p *PersonAPIProvider) Functions(ctx context.Context) []func() function.Function {
 	return []func() function.Function{}
 }
 
 func New(version string) func() provider.Provider {
 	return func() provider.Provider {
-		return &CISProvider{
+		return &PersonAPIProvider{
 			version: version,
 		}
 	}
@@ -226,7 +228,7 @@ func buildUserAgent(providerVersion string, terraformVersion string) string {
 	}
 
 	return fmt.Sprintf(
-		"terraform-provider-cis/%s (%s) Terraform/%s Go/%s (%s/%s)",
+		"terraform-provider-personapi/%s (%s) Terraform/%s Go/%s (%s/%s)",
 		providerVersion,
 		channel,
 		terraformVersion,

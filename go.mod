@@ -1,4 +1,4 @@
-module terraform-provider-cis
+module terraform-provider-personapi
 
 go 1.26.0
 

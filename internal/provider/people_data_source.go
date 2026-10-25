@@ -4,7 +4,8 @@ import (
 	"context"
 	"fmt"
 	"strconv"
-	"terraform-provider-cis/internal/provider/person_api"
+
+	"terraform-provider-personapi/internal/provider/person_api"
 
 	"github.com/hashicorp/terraform-plugin-framework-validators/datasourcevalidator"
 	"github.com/hashicorp/terraform-plugin-framework/datasource"
@@ -61,11 +62,11 @@ func (d *PeopleDataSource) Metadata(ctx context.Context, req datasource.Metadata
 }
 
 // PeopleAttributes returns the schema attributes describing a person. It is
-// shared by the cis_people data source and the cis_group members list.
+// shared by the personapi_people data source and the personapi_group members list.
 //
-// When readOnly is false (the cis_people data source), email, id, and username
+// When readOnly is false (the personapi_people data source), email, id, and username
 // are Optional because they identify which person to look up. When readOnly is
-// true (embedded as cis_group members output), every attribute is Computed.
+// true (embedded as personapi_group members output), every attribute is Computed.
 func PeopleAttributes(readOnly bool) map[string]schema.Attribute {
 	// queryField is Optional when used as a lookup input, Computed when the whole
 	// object is read-only output.
@@ -270,7 +271,7 @@ func (d *PeopleDataSource) Read(ctx context.Context, req datasource.ReadRequest,
 }
 
 // personToModel maps a person_api.Person into a PeopleDataSourceModel using only
-// locally-available data. It is shared by the cis_people and cis_group data
+// locally-available data. It is shared by the personapi_people and personapi_group data
 // sources. GitHub_Username is set to the value CIS provides; callers wanting the
 // freshest value should overwrite it with resolveGithubUsername (a network call).
 // The Email field is left unset, as it is not consistently present on profiles

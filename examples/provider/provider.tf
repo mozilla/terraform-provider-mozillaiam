@@ -1,9 +1,9 @@
 terraform {
   required_providers {
-    cis = {
-      source = "registry.terraform.io/mozilla/cis"
+    personapi = {
+      source = "registry.opentofu.org/mozilla/personapi"
     }
   }
 }
 
-provider "cis" {}
+provider "personapi" {}
